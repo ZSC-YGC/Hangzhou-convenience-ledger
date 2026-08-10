@@ -2,7 +2,7 @@
 > 一个纯前端浏览器本地台账工具，记账、出行记录、待办备忘录。**所有数据存储在浏览器 LocalStorage，不上传服务器**。
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub‑Pages-Online-green)](https://zsc‑ygc.github.io/Hangzhou‑convenience‑ledger/)
-> 在线访问地址：https://zsc‑ygc.github.io/Hangzhou‑convenience‑ledger/
+> 在线访问地址：https://zsc-ygc.github.io/Hangzhou-convenience-ledger/
 
 ## 📖 项目简介
 杭城便民生活台账，面向杭州本地生活设计的单页Web应用。无需后端、无需数据库，全部运行于浏览器。
@@ -19,7 +19,7 @@
 ### 方式1：在线访问（推荐）
 直接打开 GitHub Pages 部署链接即可使用，无需下载任何文件。
 ```
-https://zsc‑ygc.github.io/Hangzhou‑convenience‑ledger/
+https://zsc-ygc.github.io/Hangzhou-convenience-ledger/
 ```
 
 ### 方式2：本地运行
