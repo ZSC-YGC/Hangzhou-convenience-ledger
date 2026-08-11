@@ -33,7 +33,7 @@
             position: fixed;
             inset:0;
             z-index:-2;
-            background-image: url(./background.jpeg);
+            background-image: url(./image/background.jpeg);
             background-size: cover;
             background-position:center;
             background-repeat:no-repeat;
@@ -74,10 +74,17 @@
         .app-tab{
             display: flex;
             gap: 27px;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 14px 0;
+            justify-content: safe center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 14px 16px;
             margin-bottom: 12px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .app-tab::-webkit-scrollbar{
+            display: none;
         }
 
         .app-tab-item{
@@ -89,6 +96,7 @@
             background: #fff;
             border: 1px solid #e6e2dd;
             color: #636e72;
+            flex-shrink: 0;
         }
 
         .app-tab-item:hover{
@@ -129,13 +137,19 @@
             inset:0;
             background:rgba(0,0,0,0.45);
             z-index:999;
-            display:none;
+            display:flex;
             align-items:center;
             justify-content:center;
             padding:16px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .modal-mask.show{
-            display:flex;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
         .modal-box{
             background:#fff;
@@ -144,7 +158,16 @@
             width:100%;
             border:1px solid #e6e2dd;
             padding:24px;
+            transform: scale(0.92);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
+
+        .modal-mask.show .modal-box{
+            transform: scale(1);
+            opacity: 1;
+        }
+
         .modal-box h3{
             color:#4a7c80;
             margin-bottom:14px;
@@ -246,21 +269,58 @@
             box-shadow: 0 0 0 2px rgba(74, 124, 130, 0.5);
         }
 
-        .select2-container--default .select2-selection--single .select2-selection__rendered{
-            color: #333;
-        }
-
         .select2-container--default .select2-selection--single{
             border: 1px solid #c9d8d8;
             border-radius: 6px;
+            height: 38px;
+            background: #fff;
+            outline: none;
+            transition: 0.2s;
+            font-size: 14px;
         }
 
+        .select2-container--default .select2-selection--single .select2-selection__rendered{
+            color: #333;
+            line-height: 38px;
+            padding: 0 11px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow{
+            height: 38px;
+            right: 8px;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--single,
         .select2-container--default.select2-container--open .select2-selection--single{
             border-color: #4a7c80;
+            box-shadow: 0 0 0 2px rgba(74, 124, 130, 0.5);
+        }
+
+        .select2-container--default .select2-dropdown{
+            border-color: #c9d8d8;
+            border-radius: 6px;
         }
 
         .select2-container--default .select2-results__option--highlighted[aria-selected]{
             background: #4a7c80;
+        }
+
+        .select2-container--default .select2-search--dropdown .select2-search__field{
+            border: 1px solid #c9d8d8;
+            border-radius: 6px;
+            outline: none;
+            padding: 6px 8px;
+            font-size: 14px;
+        }
+
+        .select2-container--default .select2-search--dropdown .select2-search__field:focus{
+            border-color: #4a7c80;
+        }
+
+        .select2-container--default.select2-container--disabled .select2-selection--single{
+            background: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
         /* 按钮 */
@@ -282,6 +342,7 @@
         /* 图表 */
         .chart-box{
             margin: 22px 0;
+            min-width: 0;
         }
 
         #billBarChart{
@@ -381,6 +442,16 @@
         }
 
         @media (max-width: 768px) {
+            .app-tab{
+                gap: 10px;
+                padding: 14px 12px;
+            }
+
+            .app-tab-item{
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
             .home-card-part{
                 grid-template-columns: 1fr;
             }
@@ -389,13 +460,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .app-tab{
-                gap: 10px;
-            }
-
-            .app-tab-item{
-                padding: 8px 12px;
-                font-size: 14px;
+            .pie-row .chart-box{
+                min-width: 100% !important;
             }
         }
 
@@ -407,8 +473,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/dist/lunar.min.js"></script>
-</head>
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.2.6/lunar.min.js"></script>
 
 <body>
     <div class="app-all">
@@ -512,11 +577,11 @@
                 </div>
 
                 <!-- 扇形图容器 -->
-                <div class="pie-row" style="display:flex;gap:16px;flex-wrap:wrap;">
-                    <div class="chart-box" style="flex:1;min-width:300px;">
+                <div class="pie-row" style="display:flex;gap:16px;flex-wrap:wrap;width:100%;">
+                    <div class="chart-box" style="flex:1;min-width:260px;">
                         <canvas id="billPieChart"></canvas>
                     </div>
-                    <div class="chart-box" style="flex:1;min-width:300px;">
+                    <div class="chart-box" style="flex:1;min-width:260px;">
                         <canvas id="incomePieChart"></canvas>
                     </div>
                 </div>
@@ -609,7 +674,7 @@
             <p>简介：本地浏览器生活台账工具，记账、出行记录、待办备忘录。所有数据保存在浏览器本地。</p>
             <p>版本：1.0.0</p>
             <p>Github仓库：<a href="https://github.com/ZSC-YGC/Hangzhou-convenience-ledger" target="_blank">https://github.com/ZSC-YGC/Hangzhou-convenience-ledger</a></p>
-            <p>部署地址：<a href="https://zsc-ygc.github.io/Hangzhou-convenience-ledger" target="_blank">https://zsc-ygc.github.io/Hangzhou-convenience-ledger/</a></p>
+            <p>部署地址：<a href="https://zsc-ygc.github.io/Hangzhou-convenience-ledger/" target="_blank">https://zsc-ygc.github.io/Hangzhou-convenience-ledger/</a></p>
                 
             <button class="btn modal-close" id="closeAboutBtn">关闭</button>
         </div>
@@ -704,12 +769,31 @@
 
         };
 
+        function customStationMatcher(params, data){
+            if($.trim(params.term) === "") return data;
+            const keyword = params.term.toLowerCase();
+
+            if(data.children && data.children.length > 0){
+                if (data.text.toLowerCase().includes(keyword)){
+                    return data;
+                }
+                const matchedSites = data.children.filter(site=>
+                    site.text.toLowerCase().includes(keyword)
+                );
+                return matchedSites.length > 0
+                ? $.extend({}, data, {children: matchedSites})
+                : null;
+            }
+
+            return data.text.toLowerCase().includes(keyword) ? data : null;
+        }
+        
         function refreshStationSelect(showMetro){
             const selectDom = $("#traffic-station");
 
-            try{
+            if (selectDom.hasClass("select2-hidden-accessible")) {
                 selectDom.select2("destroy");
-            }catch(e){}
+            }
             selectDom.val(null);
 
             let html = "";
@@ -732,6 +816,7 @@
                     placeholder: "请输入站名快速查找",
                     allowClear: true,
                     width: "100%",
+                    matcher: customStationMatcher,
                     templateSelection: function(data){
                         if(!data.id) return data.text;
                         const arr = data.id.split("|");
@@ -753,6 +838,12 @@
             renderTrafficList();
             renderTodoList();
             drawBarChart();
+            
+            window.addEventListener("resize", function(){
+                if(barChartIns) barChartIns.resize();
+                if(pieChartIns) pieChartIns.resize();
+                if(incomePieChartIns) incomePieChartIns.resize();
+            });
 
             $("#traffic-way").on("change", function(){
                 const wayVal = $(this).val();
@@ -778,6 +869,7 @@
                     switchPage(pageIdMap[index]);
                     tabItems.forEach(t=>t.classList.remove("active"));
                     tab.classList.add("active");
+                    tab.scrollIntoView({behavior: "smooth", block: "nearest", inline: "center"});
                 })
             })
 
@@ -944,7 +1036,7 @@
                 <div style="border:1px solid #ccc;padding:8px;margin:6px 0;border-radius:6px;">
                     <div>出行方式：${wayText}</div>
                     <div>日期时间：${item.trafficDate} ${item.trafficTime}</div>
-                    <div>站点：${item.station || "未选择"}</div>
+                    <div>站点：${item.station ? item.station.replace('|', ' · ') : "未选择"}</div>
                     <div>备注：${item.tip || "无"}</div>
                     <button onclick="delTraffic(${idx})" style="margin-top:4px;color:white;">删除</button>
                 </div>
@@ -1245,43 +1337,42 @@
 
         // ------以下为时间刷新函数------
         const WEEK_TEXT = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-        let lastDayStr = "";
         function updateTime() {
             const now = new Date();
             const pad = n => String(n).padStart(2, "0");
             const y = now.getFullYear();
-            const m = pad(now.getMonth() + 1);
-            const d = pad(now.getDate());
+            const m = now.getMonth() + 1;
+            const d = now.getDate();
             const h = pad(now.getHours());
             const mi = pad(now.getMinutes());
-            const todayStr = `${y}-${m}-${d}`;
             const week = WEEK_TEXT[now.getDay()];
             let lunarStr = "";
 
-            if(todayStr !== lastDayStr){
-                lastDayStr = todayStr;
+            if(typeof Solar !== "undefined"){
                 try {
-                    const solar = Solar.parse(y, Number(m), Number(d));
+                    const solar = Solar.fromYmd(y, m, d);
                     const lunar = solar.getLunar();
                     let lunarMonth = lunar.getMonthInChinese();
-                    if (lunar.isLeap()) {
-                        lunarMonth = "闰" + lunarMonth;
-                    }
-                    lunarStr = `${lunar.getYearInGanZhi()}${lunar.getYearShengXiao()}年 ${lunarMonth}${lunar.getDayInChinese()}`;
+                    lunarStr = `${lunar.getYearInGanZhi()}${lunar.getYearShengXiao()}年 ${lunarMonth}月${lunar.getDayInChinese()}`;
                 } catch (err) {
-                    lunarStr = "";
+                    console.error("农历错误详情：",err);
+                    lunarStr = "农历解析异常";
                 }
+            }else{
+                lunarStr = "农历加载中…";
             }
 
             const html = `
+                ${lunarStr}<br>
                 ${y}年${m}月${d}日 ${week}<br>
-                ${h}:${mi}<br>
-                ${lunarStr}
+                ${h}:${mi}
             `;
             document.getElementById("day-time-text").innerHTML = html;
         }
-        updateTime();
-        setInterval(updateTime, 1000);
+        window.addEventListener("load", function(){
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
 
         // ------以下为获取天气函数------
         const HZ_LAT = 30.27;
