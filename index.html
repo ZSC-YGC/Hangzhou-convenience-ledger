@@ -1370,10 +1370,8 @@
             `;
             document.getElementById("day-time-text").innerHTML = html;
         }
-        window.addEventListener("load", function(){
-            updateTime();
-            setInterval(updateTime, 1000);
-        });
+        updateTime();
+        setInterval(updateTime, 1000);
 
         // ------以下为获取天气函数------
         const HZ_LAT = 30.27;
